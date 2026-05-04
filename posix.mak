@@ -312,7 +312,7 @@ STYLES=$(addsuffix .css, $(addprefix css/, \
 # HTML Files
 ################################################################################
 
-DDOC=$(addsuffix .ddoc, macros html dlang.org keywords doc ${GENERATED}/${LATEST}) $(NODATETIME) $G/dblog_latest.ddoc
+DDOC=$(addsuffix .ddoc, macros html dlang.org keywords doc ${GENERATED}/${LATEST}) $(NODATETIME)
 STD_DDOC_LATEST=$(addsuffix .ddoc, macros html keywords dlang.org ${GENERATED}/${LATEST} std std_navbar-release ${GENERATED}/modlist-${LATEST}) $(NODATETIME)
 STD_DDOC_RELEASE=$(addsuffix .ddoc, macros html keywords dlang.org ${GENERATED}/${LATEST} std std_navbar-release ${GENERATED}/modlist-release) $(NODATETIME)
 STD_DDOC_PRERELEASE=$(addsuffix .ddoc, macros html keywords dlang.org ${GENERATED}/${LATEST} std std_navbar-prerelease ${GENERATED}/modlist-prerelease) $(NODATETIME)
@@ -574,23 +574,6 @@ $G/dlangspec.txt : $G/dlangspec-consolidated.d $(DDOC_BIN) macros.ddoc plaintext
 
 $G/dlangspec.verbatim.txt : $G/dlangspec-consolidated.d $(DDOC_BIN) verbatim.ddoc
 	$(DDOC_BIN_DMD) -conf= -Df$@ verbatim.ddoc $<
-
-################################################################################
-# Fetch the latest article from the official D blog
-################################################################################
-
-ifeq (1,$(DIFFABLE))
-$G/dblog_latest.xml: dblog_feed_example.xml
-	@echo "Create a dummy DBlog XML stream due to DIFFABLE=1"
-	cp $< $@
-else
-$G/dblog_latest.xml:
-	@echo "Receiving the latest DBlog article. Disable with DIFFABLE=1"
-	curl -s --fail --retry 3 --retry-delay 5 -L http://feeds.feedburner.com/OfficialDBlog -o $@
-endif
-
-$G/dblog_latest.ddoc: $G/dblog_latest.xml $(STABLE_DMD) tools/ddoc_xml_extractor.d
-	$(STABLE_RDMD) tools/ddoc_xml_extractor.d -i $< -o $@
 
 ################################################################################
 # Git rules
